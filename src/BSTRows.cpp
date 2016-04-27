@@ -29,9 +29,40 @@ struct node{
 	struct node *right;
 };
 
+int getheight(struct node *root){
+	if (root == NULL){
+		return 0;
+	}
+	if (getheight(root->left) >= getheight(root->right)){
+		return getheight(root->left) + 1;
+	}
+	else{
+		return getheight(root->right) + 1;
+	}
+}
 
+void r2l(struct node*root, int *arr, int l,int *index){
+	if (root != NULL){
+		if (l == 1){
+			arr[*index] = root->data;
+			*index = *index + 1;
+		}
+		else if (l > 1){
+			r2l(root->right, arr, l - 1, index);
+			r2l(root->left, arr, l - 1, index);
+		}
+	}
+}
 
 int* BSTRighttoLeftRows(struct node* root)
 {
-    return NULL;
+	if (root == NULL)
+		return NULL;
+	int i;
+	int *arr, index = 0;
+	arr = (int*)malloc(sizeof(int));
+	for (i = 1; i <= getheight(root); i++){
+		r2l(root, arr, i,&index);
+	}
+	return arr;
 }

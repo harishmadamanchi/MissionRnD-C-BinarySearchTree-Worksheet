@@ -32,6 +32,56 @@ struct node{
 	struct node *right;
 };
 
-void fix_bst(struct node *root){
+void findvalues(int *, int *, int *, int);
+void modify(struct node *, int, int);
 
+void inordertoarray(struct node *root, int *arr, int *index){
+	if (root != NULL){
+		inordertoarray(root->left, arr, index);
+		arr[*index] = root->data;
+		*index = *index + 1;
+		inordertoarray(root->right, arr, index);
+	}
 }
+
+void findvalues(int *arr, int *misplaced1, int *misplaced2,int index){
+	int i = 0;
+	for (i = 0; i < index - 1; i++){
+		if (arr[i]>arr[i + 1]){
+			if (*misplaced1 == -1){
+				*misplaced1 = arr[i];
+			}
+			else{
+				*misplaced2 = arr[i + 1];
+				break;
+			}
+		}
+	}
+}
+
+void modify(struct node *root, int misplaced1, int misplaced2){
+	if (root == NULL){
+		return;
+	}
+	if (root->data == misplaced1){
+		root->data = misplaced2;
+	}
+	else if (root->data == misplaced2){
+		root->data = misplaced1;
+	}
+	modify(root->left, misplaced1, misplaced2);
+	modify(root->right, misplaced1, misplaced2);
+}
+
+void fix_bst(struct node *root){
+	if (root == NULL)
+		return;
+	int *arr, index = 0, misplaced1 = -1, misplaced2 = -1;
+	arr = (int*)malloc(sizeof(int));
+	inordertoarray(root, arr, &index);
+	findvalues(arr, &misplaced1, &misplaced2, index);
+	if (misplaced1 != -1 && misplaced2 != -1)
+		modify(root, misplaced1, misplaced2);
+}
+
+

@@ -39,7 +39,52 @@ struct node{
   struct node *right;
 };
 
+void preorderarray(struct node*root, int *pre, int *leaf, int *preindex, int *leafindex){
+	if (root != NULL){
+		pre[*preindex] = root->data;
+		*preindex = *preindex + 1;
+		if (root->left == NULL&&root->right == NULL){
+			leaf[*leafindex] = root->data;
+			*leafindex = *leafindex + 1;
+		}
+		preorderarray(root->left, pre, leaf, preindex, leafindex);
+		preorderarray(root->right, pre, leaf, preindex, leafindex);
+	}
+}
+
 int get_closest_leaf_distance(struct node *root, struct node *temp)
 {
-  return -1;
+	if (root == NULL || temp == NULL){
+		return -1;
+	}
+	int *pre, *leaf, preindex = 0, leafindex = 0;
+	int i, j, k, mindist, dist, tempelmentindex, leafelementindex;
+	pre = (int*)malloc(sizeof(int));
+	leaf = (int*)malloc(sizeof(int));
+	preorderarray(root, pre, leaf, &preindex, &leafindex);
+	mindist = preindex;
+	for (k = 0; k < preindex; k++){
+		if (pre[k] == temp->data){
+			tempelmentindex = k;
+			break;
+		}
+	}
+	for (i = 0; i < leafindex; i++){
+		for (j = 0; j < preindex; j++){
+			if (leaf[i] == pre[j]){
+				leafelementindex = j;
+				break;
+			}
+		}
+		if (leafelementindex < tempelmentindex)
+			dist = tempelmentindex - leafelementindex + 1;
+		else if (leafelementindex == tempelmentindex)
+			dist = 0;
+		else
+			dist = leafelementindex - tempelmentindex;
+		if (mindist>dist){
+			mindist = dist;
+		}
+	}
+	return mindist;
 }
